@@ -59,7 +59,7 @@
 	</dependencies>
 
 	<build>
-	<finalName>backendappointmentapi</finalName>
+	<finalName>backendapi</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
