@@ -1,0 +1,90 @@
+package com.klef.cicd.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import com.klef.cicd.entity.Appointment;
+import com.klef.cicd.service.AppointmentService;
+
+@RestController
+@RequestMapping("/appointmentapi")
+@CrossOrigin(origins = "*")
+public class AppointmentController {
+
+    @Autowired
+    private AppointmentService appointmentService;
+    
+    @GetMapping("/")
+    public String home() {
+        return "Appointment Scheduler API is running";
+    }
+
+    // Add new appointment
+    @PostMapping("/add")
+    public ResponseEntity<?> addAppointment(@RequestBody Appointment appointment) {
+        try {
+            Appointment savedAppointment = appointmentService.addAppointment(appointment);
+            return new ResponseEntity<>(savedAppointment, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error adding appointment: " + e.getMessage(),
+                                        HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Get all appointments
+    @GetMapping("/all")
+    public ResponseEntity<List<Appointment>> getAllAppointments() {
+        List<Appointment> appointments = appointmentService.getAllAppointments();
+        return new ResponseEntity<>(appointments, HttpStatus.OK);
+    }
+
+    // Get appointment by ID
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> getAppointmentById(@PathVariable int id) {
+        Appointment appointment = appointmentService.getAppointmentById(id);
+        if (appointment != null) {
+            return new ResponseEntity<>(appointment, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Appointment with ID " + id + " not found.", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Update appointment
+    @PutMapping("/update")
+    public ResponseEntity<?> updateAppointment(@RequestBody Appointment appointment) {
+        try {
+            Appointment existing = appointmentService.getAppointmentById(appointment.getId());
+            if (existing != null) {
+                Appointment updatedAppointment = appointmentService.updateAppointment(appointment);
+                return new ResponseEntity<>(updatedAppointment, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Cannot update. Appointment with ID " + appointment.getId() + " not found.",
+                                            HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error updating appointment: " + e.getMessage(),
+                                        HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Delete appointment
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteAppointment(@PathVariable int id) {
+        try {
+            Appointment existing = appointmentService.getAppointmentById(id);
+            if (existing != null) {
+                appointmentService.deleteAppointmentById(id);
+                return new ResponseEntity<>("Appointment with ID " + id + " deleted successfully.", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Cannot delete. Appointment with ID " + id + " not found.", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error deleting appointment: " + e.getMessage(),
+                                        HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+}

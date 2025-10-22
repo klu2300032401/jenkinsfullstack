@@ -1,0 +1,9 @@
+package com.klef.cicd.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import com.klef.cicd.entity.Appointment;
+
+@Repository
+public interface AppointmentRepository extends JpaRepository<Appointment, Integer> {
+}

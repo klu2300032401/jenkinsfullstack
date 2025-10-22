@@ -1,0 +1,62 @@
+package com.klef.cicd.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "appointment_table")
+public class Appointment {
+
+    @Id
+    @Column(name = "appointment_id")
+    private int id;
+
+    @Column(name = "appointment_title", nullable = false, length = 50)
+    private String title;
+
+    @Column(name = "appointment_description", length = 200)
+    private String description;
+
+    @Column(name = "appointment_date", nullable = false, length = 20)
+    private String date; // Format: YYYY-MM-DD
+
+    @Column(name = "appointment_time", nullable = false, length = 10)
+    private String time; // Format: HH:MM
+
+    @Column(name = "appointment_participant", nullable = false, length = 50)
+    private String participant;
+
+    @Column(name = "appointment_contact", nullable = false, length = 20)
+    private String contact;
+
+    // Getters and Setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public String getDate() { return date; }
+    public void setDate(String date) { this.date = date; }
+
+    public String getTime() { return time; }
+    public void setTime(String time) { this.time = time; }
+
+    public String getParticipant() { return participant; }
+    public void setParticipant(String participant) { this.participant = participant; }
+
+    public String getContact() { return contact; }
+    public void setContact(String contact) { this.contact = contact; }
+
+    @Override
+    public String toString() {
+        return "Appointment [id=" + id + ", title=" + title + ", description=" + description +
+               ", date=" + date + ", time=" + time + ", participant=" + participant +
+               ", contact=" + contact + "]";
+    }
+}

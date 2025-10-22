@@ -1,0 +1,69 @@
+package com.klef.cicd.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import com.klef.cicd.entity.Appointment;
+import com.klef.cicd.service.AppointmentService;
+
+@RestController
+@RequestMapping("/appointmentapi/")
+@CrossOrigin(origins = "*")
+public class AppointmentController {
+
+    @Autowired
+    private AppointmentService appointmentService;
+    
+    @GetMapping("/")
+    public String home() {
+        return "Appointment Scheduler API is running";
+    }
+    
+    @PostMapping("/add")
+    public ResponseEntity<Appointment> addAppointment(@RequestBody Appointment appointment) {
+        Appointment savedAppointment = appointmentService.addAppointment(appointment);
+        return new ResponseEntity<>(savedAppointment, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Appointment>> getAllAppointments() {
+        List<Appointment> appointments = appointmentService.getAllAppointments();
+        return new ResponseEntity<>(appointments, HttpStatus.OK);
+    }
+
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> getAppointmentById(@PathVariable int id) {
+        Appointment appointment = appointmentService.getAppointmentById(id);
+        if (appointment != null) {
+            return new ResponseEntity<>(appointment, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Appointment with ID " + id + " not found.", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateAppointment(@RequestBody Appointment appointment) {
+        Appointment existing = appointmentService.getAppointmentById(appointment.getId());
+        if (existing != null) {
+            Appointment updatedAppointment = appointmentService.updateAppointment(appointment);
+            return new ResponseEntity<>(updatedAppointment, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Cannot update. Appointment with ID " + appointment.getId() + " not found.", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteAppointment(@PathVariable int id) {
+        Appointment existing = appointmentService.getAppointmentById(id);
+        if (existing != null) {
+            appointmentService.deleteAppointmentById(id);
+            return new ResponseEntity<>("Appointment with ID " + id + " deleted successfully.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Cannot delete. Appointment with ID " + id + " not found.", HttpStatus.NOT_FOUND);
+        }
+    }
+}
